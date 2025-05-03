@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Three.js GLB Scene</title>
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+				font-family: Arial, sans-serif;
+				background-color: #0a0a0a;
+				color: #ffffff;
+			}
+			canvas {
+				display: block;
+			}
+			#controls {
+				position: absolute;
+				bottom: 20px;
+				left: 50%;
+				transform: translateX(-50%);
+				background: rgba(0, 0, 0, 0.5);
+				padding: 10px;
+				border-radius: 5px;
+				display: flex;
+				gap: 10px;
+				z-index: 100;
+			}
+			button {
+				padding: 8px 15px;
+				background: #003380;
+				color: white;
+				border: 1px solid #f9c93c;
+				border-radius: 4px;
+				cursor: pointer;
+				font-weight: bold;
+				transition: background 0.2s;
+			}
+			button:hover {
+				background: #004db3;
+				border-color: #ffd966;
+			}
+			#frameInfo {
+				position: absolute;
+				top: 20px;
+				left: 20px;
+				background: rgba(20, 20, 20, 0.8);
+				color: white;
+				padding: 10px 15px;
+				border-radius: 8px;
+				font-family: monospace;
+				font-size: 14px;
+				z-index: 100;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+				border-left: 4px solid #4caf50;
+			}
+			#timelineContainer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				width: 100%;
+				background: rgba(0, 51, 128, 0.9);
+				color: white;
+				padding: 0;
+				z-index: 100;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+			}
+			#timelineHeader {
+				margin: 0;
+				padding: 10px 20px;
+				font-size: 18px;
+				font-weight: 600;
+				color: #f9c93c;
+				background: rgba(0, 30, 80, 0.9);
+			}
+			#componentTimeline {
+				display: flex;
+				overflow-x: auto;
+				padding: 15px;
+				gap: 10px;
+				align-items: stretch;
+				scroll-behavior: smooth;
+				min-height: 80px;
+				cursor: grab;
+				user-select: none;
+			}
+			#componentTimeline.dragging {
+				cursor: grabbing;
+				scroll-behavior: auto; /* Disable smooth scrolling during drag for better performance */
+			}
+			.timeline-component {
+				flex: 0 0 auto;
+				width: 200px;
+				padding: 15px;
+				background: rgba(0, 40, 100, 0.8);
+				border-radius: 8px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				border: 1px solid rgba(249, 201, 60, 0.3);
+			}
+			.timeline-component:hover {
+				background: rgba(0, 60, 140, 0.9);
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+				border-color: rgba(249, 201, 60, 0.8);
+			}
+			.timeline-component.active {
+				background: rgba(0, 51, 128, 0.9);
+				border-color: #f9c93c;
+				box-shadow: 0 0 15px rgba(249, 201, 60, 0.5);
+			}
+			.component-name {
+				font-weight: bold;
+				margin-bottom: 8px;
+				color: #f9c93c;
+				font-size: 14px;
+			}
+			.component-description {
+				color: #ffffff;
+				font-size: 12px;
+				line-height: 1.4;
+			}
+			/* Add custom scrollbar for the timeline */
+			#componentTimeline::-webkit-scrollbar {
+				height: 8px;
+			}
+			#componentTimeline::-webkit-scrollbar-track {
+				background: rgba(0, 30, 80, 0.5);
+				border-radius: 4px;
+			}
+			#componentTimeline::-webkit-scrollbar-thumb {
+				background: rgba(249, 201, 60, 0.7);
+				border-radius: 4px;
+			}
+			#componentTimeline::-webkit-scrollbar-thumb:hover {
+				background: rgba(249, 201, 60, 0.9);
+			}
+			#exploreMessage {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background: rgba(0, 51, 128, 0.8);
+				color: #f9c93c;
+				padding: 15px 30px;
+				border-radius: 8px;
+				font-size: 24px;
+				font-weight: bold;
+				text-align: center;
+				z-index: 1000;
+				opacity: 0;
+				transition: opacity 0.5s ease;
+				border: 2px solid #f9c93c;
+				box-shadow: 0 0 20px rgba(249, 201, 60, 0.5);
+				pointer-events: none; /* Allow clicks to pass through */
+				text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+			}
+
+			#logoContainer {
+				position: absolute;
+				bottom: -5px;
+				left: 20px;
+				z-index: 1000;
+			}
+
+			#logo {
+				width: 100px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Frame Info Display -->
+		<!-- <div id="frameInfo">Frame: 0</div> -->
+
+		<!-- Component Timeline with elegant UI -->
+		<div id="timelineContainer">
+			<h3 id="timelineHeader">ISO Tank Component</h3>
+			<div id="componentTimeline"></div>
+		</div>
+
+		<div id="logoContainer">
+			<img id="logo" src="images/logo.png" alt="" srcset="" />
+		</div>
+
+		<!-- Timeline Controls -->
+		<!-- <div id="controls">
+			<button id="frame1">Frame 1</button>
+			<button id="frame200">Frame 200</button>
+			<button id="frame400">Frame 400</button>
+			<button id="frame720">Frame 720</button>
+		</div> -->
+
+		<!-- Three.js CDN -->
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+		<!-- GLTF Loader -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script> -->
+		<!-- OBJ Loader -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script> -->
+		<!-- Orbit Controls -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script> -->
+		<!-- RGBE Loader for HDR -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script> -->
+
+		<!-- Three.js CDN -->
+		<script src="script/three.js"></script>
+		<!-- GLTF Loader -->
+		<script src="script/GLTFLoader.js"></script>
+		<!-- OBJ Loader -->
+		<script src="script//OBJLoader.js"></script>
+		<!-- Orbit Controls -->
+		<script src="script/OrbitControls.js"></script>
+		<!-- RGBE Loader for HDR -->
+		<script src="script/RGBELoader.js"></script>
+
+		<!-- MTLLoader -->
+		<!-- <script src="https://threejs.org/examples/js/loaders/MTLLoader.js"></script> -->
+		<!-- Custom Script -->
+		<script src="script.js"></script>
+
+		<!-- Explore Message -->
+		<div id="exploreMessage">Explore Our Tanks</div>
+	</body>
+</html>
