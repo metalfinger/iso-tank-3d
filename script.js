@@ -671,9 +671,11 @@ objLoader.load(
 		modelLoaded();
 	},
 	function (xhr) {
-		const percent = (xhr.loaded / xhr.total) * 100;
-		console.log("Ring model: " + percent + "% loaded");
-		updateProgress("ringModel", percent);
+		if (xhr.lengthComputable) {
+			const percent = (xhr.loaded / xhr.total) * 100;
+			console.log("Ring model: " + percent + "% loaded");
+			updateProgress("ringModel", percent);
+		}
 	},
 	function (error) {
 		console.error("An error occurred loading the ring model:", error);
@@ -703,9 +705,11 @@ objLoader.load(
 		modelLoaded();
 	},
 	function (xhr) {
-		const percent = (xhr.loaded / xhr.total) * 100;
-		console.log("Frame model: " + percent + "% loaded");
-		updateProgress("frameModel", percent);
+		if (xhr.lengthComputable) {
+			const percent = (xhr.loaded / xhr.total) * 100;
+			console.log("Frame model: " + percent + "% loaded");
+			updateProgress("frameModel", percent);
+		}
 	},
 	function (error) {
 		console.error("An error occurred loading the frame model:", error);
@@ -737,9 +741,11 @@ objLoader.load(
 		modelLoaded();
 	},
 	function (xhr) {
-		const percent = (xhr.loaded / xhr.total) * 100;
-		console.log("Box frame model: " + percent + "% loaded");
-		updateProgress("boxFrameModel", percent);
+		if (xhr.lengthComputable) {
+			const percent = (xhr.loaded / xhr.total) * 100;
+			console.log("Box frame model: " + percent + "% loaded");
+			updateProgress("boxFrameModel", percent);
+		}
 	},
 	function (error) {
 		console.error("An error occurred loading the box frame model:", error);
