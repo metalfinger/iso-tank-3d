@@ -652,7 +652,7 @@ let boxFrameObject = null;
 
 // Load the ring_final.obj
 objLoader.load(
-	"models/iso-tank-animated/obj/ring_final.obj",
+	"models/ring_final.obj",
 	function (object) {
 		ringObject = object;
 		// Apply the same material settings as GLTF model
@@ -684,7 +684,7 @@ objLoader.load(
 
 // Load the frame_final.obj
 objLoader.load(
-	"models/iso-tank-animated/obj/frame_final.obj",
+	"models/frame_final.obj",
 	function (object) {
 		frameObject = object;
 		// Apply the same material settings as GLTF model
@@ -716,7 +716,7 @@ objLoader.load(
 
 // Load the box_frame_final.obj
 objLoader.load(
-	"models/iso-tank-animated/obj/box_frame_final.obj",
+	"models/box_frame_final.obj",
 	function (object) {
 		boxFrameObject = object;
 		// Apply the same material settings as GLTF model
