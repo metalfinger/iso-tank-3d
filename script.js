@@ -235,7 +235,11 @@ let currentProgress = {
 
 // Function to update progress
 function updateProgress(modelId, percent) {
-	currentProgress[modelId] = percent;
+	// Guard against NaN or invalid numbers
+	if (isNaN(percent) || !isFinite(percent)) {
+		percent = 0;
+	}
+	currentProgress[modelId] = Math.max(0, Math.min(100, percent)); // Clamp between 0 and 100
 
 	// Update detailed status showing individual model progress
 	let detailText = "";
@@ -247,9 +251,11 @@ function updateProgress(modelId, percent) {
 
 	// Calculate overall progress
 	let totalPercent = 0;
-	for (const key in currentProgress) {
-		totalPercent += currentProgress[key];
-	}
+	// Use a fixed list of keys to ensure consistent calculation
+	const modelKeys = ["mainModel", "ringModel", "frameModel", "boxFrameModel"];
+	modelKeys.forEach((key) => {
+		totalPercent += currentProgress[key] || 0;
+	});
 
 	// Average the progress across all models
 	const averagePercent = totalPercent / totalModelsToLoad;
@@ -259,12 +265,6 @@ function updateProgress(modelId, percent) {
 	progressText.textContent = `Loading 3D Models: ${Math.round(
 		averagePercent
 	)}%`;
-
-	// If main model is loaded, you can optionally hide the overlay sooner
-	if (modelId === "mainModel" && percent >= 100) {
-		// Uncomment the next line if you want to hide the overlay as soon as the main model is loaded
-		// hideLoadingOverlay();
-	}
 
 	// If everything is loaded, hide the overlay
 	if (averagePercent >= 100) {
@@ -623,9 +623,19 @@ loader.load(
 	},
 	// Progress callback
 	function (xhr) {
-		const percent = (xhr.loaded / xhr.total) * 100;
-		console.log(percent + "% loaded");
-		updateProgress("mainModel", percent);
+		if (xhr.lengthComputable) {
+			const percent = (xhr.loaded / xhr.total) * 100;
+			console.log(percent + "% loaded");
+			updateProgress("mainModel", percent);
+		} else {
+			// Fallback for non-computable progress (e.g., cross-origin loads without content-length)
+			// We can't get a real percentage, so we'll simulate a slow progression.
+			// This gives user feedback instead of a stuck bar.
+			const currentMainProgress = currentProgress["mainModel"] || 0;
+			const simulatedProgress = Math.min(currentMainProgress + 0.1, 99); // Slowly increment, but cap at 99
+			updateProgress("mainModel", simulatedProgress);
+			console.log("Simulating progress for mainModel:", simulatedProgress);
+		}
 	},
 	function (error) {
 		console.error("An error occurred loading the model:", error);
