@@ -288,6 +288,15 @@ function modelLoaded() {
 	loadedModels++;
 	if (loadedModels === totalModelsToLoad) {
 		updateProgress("complete", 100);
+
+		// Once all models are loaded, automatically jump to the first animation keyframe
+		setTimeout(() => {
+			if (mixer && animationAction) {
+				console.log("All models loaded, jumping to first animation keyframe");
+				// Jump to the first component's frame (Tank Barrel Cylinder Section at frame 51)
+				animateToFrame(51);
+			}
+		}, 1000); // Small delay to ensure everything is properly initialized
 	}
 }
 
