@@ -668,6 +668,7 @@ objLoader.load(
 			}
 		});
 		scene.add(object);
+		updateProgress("ringModel", 100); // Ensure completion
 		modelLoaded();
 	},
 	function (xhr) {
@@ -675,6 +676,11 @@ objLoader.load(
 			const percent = (xhr.loaded / xhr.total) * 100;
 			console.log("Ring model: " + percent + "% loaded");
 			updateProgress("ringModel", percent);
+		} else {
+			// Fallback for non-computable progress (e.g., cross-origin loads)
+			const currentRingProgress = currentProgress["ringModel"] || 0;
+			const simulatedProgress = Math.min(currentRingProgress + 0.2, 95);
+			updateProgress("ringModel", simulatedProgress);
 		}
 	},
 	function (error) {
@@ -702,6 +708,7 @@ objLoader.load(
 			}
 		});
 		scene.add(object);
+		updateProgress("frameModel", 100); // Ensure completion
 		modelLoaded();
 	},
 	function (xhr) {
@@ -709,6 +716,11 @@ objLoader.load(
 			const percent = (xhr.loaded / xhr.total) * 100;
 			console.log("Frame model: " + percent + "% loaded");
 			updateProgress("frameModel", percent);
+		} else {
+			// Fallback for non-computable progress (e.g., cross-origin loads)
+			const currentFrameProgress = currentProgress["frameModel"] || 0;
+			const simulatedProgress = Math.min(currentFrameProgress + 0.2, 95);
+			updateProgress("frameModel", simulatedProgress);
 		}
 	},
 	function (error) {
@@ -738,6 +750,7 @@ objLoader.load(
 			}
 		});
 		scene.add(object);
+		updateProgress("boxFrameModel", 100); // Ensure completion
 		modelLoaded();
 	},
 	function (xhr) {
@@ -745,6 +758,11 @@ objLoader.load(
 			const percent = (xhr.loaded / xhr.total) * 100;
 			console.log("Box frame model: " + percent + "% loaded");
 			updateProgress("boxFrameModel", percent);
+		} else {
+			// Fallback for non-computable progress (e.g., cross-origin loads)
+			const currentBoxProgress = currentProgress["boxFrameModel"] || 0;
+			const simulatedProgress = Math.min(currentBoxProgress + 0.2, 95);
+			updateProgress("boxFrameModel", simulatedProgress);
 		}
 	},
 	function (error) {
