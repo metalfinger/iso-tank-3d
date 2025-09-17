@@ -592,7 +592,8 @@ function ensureElementIsVisible(element) {
 loader.load(
 	// "models/Edited ISO Model_11_March.glb",
 	// "models/ISO TANK Animated_03-06-25/Full_model_05.glb",
-	"https://dl.dropboxusercontent.com/scl/fi/vumf84gvc8xlkhurrxyb2/Full_model_05.glb?rlkey=he5nm5e1tf7xjfvuk6m2q5n64&dl=1",
+	"https://dl.dropboxusercontent.com/scl/fi/d4ganv55rc1z9eism76ez/Interactive-Tank-Video.glb?rlkey=xtwfyf6eg9m1gqx4zonmqhn0i&dl=1",
+	// "https://dl.dropboxusercontent.com/scl/fi/vumf84gvc8xlkhurrxyb2/Full_model_05.glb?rlkey=he5nm5e1tf7xjfvuk6m2q5n64&dl=1",
 	function (gltf) {
 		console.log("Model loaded successfully");
 		model = gltf.scene;
